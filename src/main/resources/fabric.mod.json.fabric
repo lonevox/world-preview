@@ -27,10 +27,11 @@
 	"mixins": [
 		"world_preview.mixins.json"
 	],
+	"accessWidener": "world_preview.accesswidener",
 	"depends": {
-		"fabricloader": ">=0.14.21",
-		"minecraft": "~1.20",
-		"java": ">=17",
+		"fabricloader": ">=0.15.11",
+		"minecraft": ["~1.21.1"],
+		"java": ">=21",
 		"fabric-api": "*"
 	},
 	"suggests": {
