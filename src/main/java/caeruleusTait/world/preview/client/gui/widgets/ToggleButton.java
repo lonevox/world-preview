@@ -1,13 +1,11 @@
 package caeruleusTait.world.preview.client.gui.widgets;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
-public class ToggleButton extends ImageButton {
+public class ToggleButton extends SpriteSheetButton {
     public boolean selected;
     protected final int xDiff;
 
@@ -55,7 +53,6 @@ public class ToggleButton extends ImageButton {
             y += yDiffTex;
         }
 
-        RenderSystem.disableDepthTest();
         guiGraphics.blit(resourceLocation, getX(), getY(), x, y, width, height, textureWidth, textureHeight);
     }
 

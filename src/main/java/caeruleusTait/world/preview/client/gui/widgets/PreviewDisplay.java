@@ -20,7 +20,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.sounds.SoundManager;
@@ -70,6 +69,7 @@ public class PreviewDisplay extends AbstractWidget implements AutoCloseable {
 
     private Component coordinatesCopiedMsg = null;
     private Instant coordinatesCopiedTime = null;
+    private Tooltip previewTooltip = null;
 
     private int texWidth = 100;
     private int texHeight = 100;
@@ -190,11 +190,6 @@ public class PreviewDisplay extends AbstractWidget implements AutoCloseable {
         closeDisplayTextures();
     }
 
-    @Override
-    protected @NotNull ClientTooltipPositioner createTooltipPositioner() {
-        return DefaultTooltipPositioner.INSTANCE;
-    }
-
     public BlockPos center() {
         if (totalDragX == 0 && totalDragZ == 0) {
             return renderSettings.center();
@@ -279,6 +274,9 @@ public class PreviewDisplay extends AbstractWidget implements AutoCloseable {
 
                 biomesChanged();
                 updateTooltip(mouseX, mouseZ);
+                if (previewTooltip != null && minecraft.screen != null) {
+                    minecraft.screen.setTooltipForNextRenderPass(previewTooltip, DefaultTooltipPositioner.INSTANCE, this.isFocused());
+                }
             }
         }
 
@@ -726,7 +724,7 @@ public class PreviewDisplay extends AbstractWidget implements AutoCloseable {
         HoverInfo hoverInfo = hoveredBiome(mouseX, mouseY);
         List<StructHoverHelperEntry> structuresInfos = hoveredStructures(mouseX, mouseY);
         if (hoverInfo == null && structuresInfos.isEmpty()) {
-            setTooltip(null);
+            previewTooltip = null;
             return;
         }
 
@@ -736,17 +734,17 @@ public class PreviewDisplay extends AbstractWidget implements AutoCloseable {
         if (!structuresInfos.isEmpty()) {
             var structure = structuresInfos.get(0).structure;
             if (config.showControls) {
-                setTooltip(Tooltip.create(Component.translatable(
+                previewTooltip = Tooltip.create(Component.translatable(
                         "world_preview.preview-display.struct.tooltip.controls",
                         nameFormatter(dataProvider.structure4Id(structure.structureId()).name()),
                         blockPosTemplate.formatted(structure.center().getX(), structure.center().getY(), structure.center().getZ())
-                )));
+                ));
             } else {
-                setTooltip(Tooltip.create(Component.translatable(
+                previewTooltip = Tooltip.create(Component.translatable(
                         "world_preview.preview-display.struct.tooltip",
                         nameFormatter(dataProvider.structure4Id(structure.structureId()).name()),
                         blockPosTemplate.formatted(structure.center().getX(), structure.center().getY(), structure.center().getZ())
-                )));
+                ));
             }
             return;
         }
@@ -766,21 +764,21 @@ public class PreviewDisplay extends AbstractWidget implements AutoCloseable {
         }
 
         if (config.showControls) {
-            setTooltip(Tooltip.create(Component.translatable(
+            previewTooltip = Tooltip.create(Component.translatable(
                     "world_preview.preview-display.tooltip.controls",
                     nameFormatter(hoverInfo.entry == null ? "<N/A>" : hoverInfo.entry.name()),
                     blockPosTemplate.formatted(hoverInfo.blockX, hoverInfo.blockY, hoverInfo.blockZ),
                     height,
                     noise
-            )));
+            ));
         } else {
-            setTooltip(Tooltip.create(Component.translatable(
+            previewTooltip = Tooltip.create(Component.translatable(
                     "world_preview.preview-display.tooltip",
                     nameFormatter(hoverInfo.entry == null ? "<N/A>" : hoverInfo.entry.name()),
                     blockPosTemplate.formatted(hoverInfo.blockX, hoverInfo.blockY, hoverInfo.blockZ),
                     height,
                     noise
-                    )));
+            ));
         }
     }
 
@@ -842,14 +840,14 @@ public class PreviewDisplay extends AbstractWidget implements AutoCloseable {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
         synchronized (dataProvider) {
             if (dataProvider.isUpdating()) {
                 return true;
             }
-            if (delta > 0.0) {
+            if (scrollY > 0.0) {
                 renderSettings.decrementY();
-            } else if (delta < 0.0) {
+            } else if (scrollY < 0.0) {
                 renderSettings.incrementY();
             }
             return true;

@@ -8,6 +8,7 @@ import net.minecraft.server.Services;
 import net.minecraft.server.WorldStem;
 import net.minecraft.server.level.progress.ChunkProgressListenerFactory;
 import net.minecraft.server.packs.repository.PackRepository;
+import net.minecraft.util.debugchart.SampleLogger;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,6 +17,20 @@ import java.net.Proxy;
 import java.util.UUID;
 
 public class DummyMinecraftServer extends MinecraftServer {
+    private static final SampleLogger NOOP_SAMPLE_LOGGER = new SampleLogger() {
+        @Override
+        public void logFullSample(long[] values) {
+        }
+
+        @Override
+        public void logSample(long value) {
+        }
+
+        @Override
+        public void logPartialSample(long value, int dimension) {
+        }
+    };
+
     public DummyMinecraftServer(
             Thread thread,
             LevelStorageSource.LevelStorageAccess levelStorageAccess,
@@ -89,6 +104,16 @@ public class DummyMinecraftServer extends MinecraftServer {
 
     @Override
     public boolean isSingleplayerOwner(@NotNull GameProfile profile) {
+        return false;
+    }
+
+    @Override
+    protected SampleLogger getTickTimeLogger() {
+        return NOOP_SAMPLE_LOGGER;
+    }
+
+    @Override
+    public boolean isTickTimeLoggingEnabled() {
         return false;
     }
 }

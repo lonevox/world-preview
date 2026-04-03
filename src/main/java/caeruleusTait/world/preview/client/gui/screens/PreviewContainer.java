@@ -10,6 +10,7 @@ import caeruleusTait.world.preview.backend.color.PreviewMappingData;
 import caeruleusTait.world.preview.client.gui.PreviewContainerDataProvider;
 import caeruleusTait.world.preview.client.gui.PreviewDisplayDataProvider;
 import caeruleusTait.world.preview.client.gui.widgets.PreviewDisplay;
+import caeruleusTait.world.preview.client.gui.widgets.SpriteSheetButton;
 import caeruleusTait.world.preview.client.gui.widgets.ToggleButton;
 import caeruleusTait.world.preview.client.gui.widgets.lists.AbstractSelectionListHolder;
 import caeruleusTait.world.preview.client.gui.widgets.lists.BiomesList;
@@ -72,13 +73,13 @@ import static caeruleusTait.world.preview.client.WorldPreviewComponents.*;
 
 public class PreviewContainer implements AutoCloseable, PreviewDisplayDataProvider {
 
-    public static final TagKey<Biome> C_CAVE = TagKey.create(Registries.BIOME, new ResourceLocation("c", "caves"));
-    public static final TagKey<Biome> C_IS_CAVE = TagKey.create(Registries.BIOME, new ResourceLocation("c", "is_cave"));
-    public static final TagKey<Biome> FORGE_CAVE = TagKey.create(Registries.BIOME, new ResourceLocation("forge", "caves"));
-    public static final TagKey<Biome> FORGE_IS_CAVE = TagKey.create(Registries.BIOME, new ResourceLocation("forge", "is_cave"));
-    public static final TagKey<Structure> DISPLAY_BY_DEFAULT = TagKey.create(Registries.STRUCTURE, new ResourceLocation("c", "display_on_map_by_default"));
+    public static final TagKey<Biome> C_CAVE = TagKey.create(Registries.BIOME, ResourceLocation.fromNamespaceAndPath("c", "caves"));
+    public static final TagKey<Biome> C_IS_CAVE = TagKey.create(Registries.BIOME, ResourceLocation.fromNamespaceAndPath("c", "is_cave"));
+    public static final TagKey<Biome> FORGE_CAVE = TagKey.create(Registries.BIOME, ResourceLocation.fromNamespaceAndPath("forge", "caves"));
+    public static final TagKey<Biome> FORGE_IS_CAVE = TagKey.create(Registries.BIOME, ResourceLocation.fromNamespaceAndPath("forge", "is_cave"));
+    public static final TagKey<Structure> DISPLAY_BY_DEFAULT = TagKey.create(Registries.STRUCTURE, ResourceLocation.fromNamespaceAndPath("c", "display_on_map_by_default"));
 
-    public static final ResourceLocation BUTTONS_TEXTURE = new ResourceLocation("world_preview:textures/gui/buttons.png");
+    public static final ResourceLocation BUTTONS_TEXTURE = ResourceLocation.fromNamespaceAndPath("world_preview", "textures/gui/buttons.png");
     public static final int BUTTONS_TEX_WIDTH = 400;
     public static final int BUTTONS_TEX_HEIGHT = 60;
 
@@ -161,7 +162,7 @@ public class PreviewContainer implements AutoCloseable, PreviewDisplayDataProvid
         // seedLabel = new WGLabel(font, 0, 0, 100, LINE_HEIGHT, WGLabel.TextAlignment.LEFT, SEED_LABEL, 0xFFFFFF);
         // toRender.add(seedLabel);
 
-        randomSeedButton = new ImageButton(
+        randomSeedButton = new SpriteSheetButton(
                 0, 0, 20, 20, /* x, y, width, height */
                 0, 20, 20, /* xTexStart, yTexStart, yDiffTex */
                 BUTTONS_TEXTURE, BUTTONS_TEX_WIDTH, BUTTONS_TEX_HEIGHT, /* resourceLocation, textureWidth, textureHeight*/
@@ -171,7 +172,7 @@ public class PreviewContainer implements AutoCloseable, PreviewDisplayDataProvid
         randomSeedButton.active = dataProvider.seedIsEditable();
         toRender.add(randomSeedButton);
 
-        saveSeed = new ImageButton(
+        saveSeed = new SpriteSheetButton(
                 0, 0, 20, 20, /* x, y, width, height */
                 20, 20, 20, /* xTexStart, yTexStart, yDiffTex */
                 BUTTONS_TEXTURE, BUTTONS_TEX_WIDTH, BUTTONS_TEX_HEIGHT, /* resourceLocation, textureWidth, textureHeight*/
@@ -181,7 +182,7 @@ public class PreviewContainer implements AutoCloseable, PreviewDisplayDataProvid
         saveSeed.active = false;
         toRender.add(saveSeed);
 
-        settings = new ImageButton(
+        settings = new SpriteSheetButton(
                 0, 0, 20, 20, /* x, y, width, height */
                 60, 20, 20, /* xTexStart, yTexStart, yDiffTex */
                 BUTTONS_TEXTURE, BUTTONS_TEX_WIDTH, BUTTONS_TEX_HEIGHT, /* resourceLocation, textureWidth, textureHeight*/
@@ -194,7 +195,7 @@ public class PreviewContainer implements AutoCloseable, PreviewDisplayDataProvid
         settings.active = false; // Do not allow clicking away until we loaded levelStemKeys
         toRender.add(settings);
 
-        resetToZeroZero = new ImageButton(
+        resetToZeroZero = new SpriteSheetButton(
                 0, 0, 20, 20, /* x, y, width, height */
                 120, 20, 20, /* xTexStart, yTexStart, yDiffTex */
                 BUTTONS_TEXTURE, BUTTONS_TEX_WIDTH, BUTTONS_TEX_HEIGHT, /* resourceLocation, textureWidth, textureHeight*/
@@ -453,7 +454,7 @@ public class PreviewContainer implements AutoCloseable, PreviewDisplayDataProvid
         updateSeedListWidget();
         seedEdit.setValue(dataProvider.seed());
         if (!seedEdit.isFocused()) {
-            seedEdit.moveCursorToStart();
+            seedEdit.moveCursorToStart(false);
         }
 
         // Range validation
@@ -587,7 +588,7 @@ public class PreviewContainer implements AutoCloseable, PreviewDisplayDataProvid
             PreviewData.StructureData data = previewData.structId2StructData()[i];
             allStructureIcons[i] = icons.computeIfAbsent(data.icon(), x -> {
                 if (x == null) {
-                    x = new ResourceLocation("world_preview:textures/structure/unknown.png");
+                    x = ResourceLocation.fromNamespaceAndPath("world_preview", "textures/structure/unknown.png");
                 }
                 Optional<Resource> resource = builtinResourceManager.getResource(x);
                 if (resource.isEmpty()) {
@@ -595,7 +596,7 @@ public class PreviewContainer implements AutoCloseable, PreviewDisplayDataProvid
                 }
                 if (resource.isEmpty()) {
                     LOGGER.error("Failed to load structure icon: '{}'", x);
-                    resource = builtinResourceManager.getResource(new ResourceLocation("world_preview:textures/structure/unknown.png"));
+                    resource = builtinResourceManager.getResource(ResourceLocation.fromNamespaceAndPath("world_preview", "textures/structure/unknown.png"));
                 }
                 if (resource.isEmpty()) {
                     LOGGER.error("FATAL ERROR LOADING: '{}' -- unable to load fallback!", x);
@@ -615,8 +616,8 @@ public class PreviewContainer implements AutoCloseable, PreviewDisplayDataProvid
         //  - Player and spawn icon
         final Optional<Resource> playerResource;
         final Optional<Resource> spawnResource;
-        playerResource = builtinResourceManager.getResource(new ResourceLocation("world_preview:textures/etc/player.png"));
-        spawnResource = builtinResourceManager.getResource(new ResourceLocation("world_preview:textures/etc/bed.png"));
+        playerResource = builtinResourceManager.getResource(ResourceLocation.fromNamespaceAndPath("world_preview", "textures/etc/player.png"));
+        spawnResource = builtinResourceManager.getResource(ResourceLocation.fromNamespaceAndPath("world_preview", "textures/etc/bed.png"));
         try {
             try(InputStream inPlayer = playerResource.orElseThrow().open(); InputStream inSpawn = spawnResource.orElseThrow().open()) {
                 playerIcon = NativeImage.read(inPlayer);

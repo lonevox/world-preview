@@ -3,6 +3,7 @@ package caeruleusTait.world.preview.client.gui.widgets;
 import caeruleusTait.world.preview.client.WorldPreviewClient;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
@@ -70,15 +71,14 @@ public class ColorChooser extends AbstractWidget {
         int rightX = leftX + svSquareSize;
         int botY = topY + svSquareSize;
 
-        BufferBuilder buffer = Tesselator.getInstance().getBuilder();
+        BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
-        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-        buffer.vertex(posMatrix, (float) leftX, (float) topY, 0).color(hue, 0f, 1f, 1f).endVertex();
-        buffer.vertex(posMatrix, (float) leftX, (float) botY, 0).color(hue, 0f, 0f, 1f).endVertex();
-        buffer.vertex(posMatrix, (float) rightX, (float) botY, 0).color(hue, 1f, 0f, 1f).endVertex();
-        buffer.vertex(posMatrix, (float) rightX, (float) topY, 0).color(hue, 1f, 1f, 1f).endVertex();
+        buffer.addVertex(posMatrix, (float) leftX, (float) topY, 0).setColor(hue, 0f, 1f, 1f);
+        buffer.addVertex(posMatrix, (float) leftX, (float) botY, 0).setColor(hue, 0f, 0f, 1f);
+        buffer.addVertex(posMatrix, (float) rightX, (float) botY, 0).setColor(hue, 1f, 0f, 1f);
+        buffer.addVertex(posMatrix, (float) rightX, (float) topY, 0).setColor(hue, 1f, 1f, 1f);
 
-        Tesselator.getInstance().end();
+        BufferUploader.drawWithShader(buffer.buildOrThrow());
 
         // Render saturation value indicator
         int satX = leftX + Math.round(saturation * svSquareSize);
@@ -91,14 +91,13 @@ public class ColorChooser extends AbstractWidget {
         leftX = rightX + SEPARATOR;
         rightX = leftX + hBarWidth;
 
-        buffer = Tesselator.getInstance().getBuilder();
-        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-        buffer.vertex(posMatrix, (float) leftX, (float) topY, 0).color(1f, 1f, 1f, 1f).endVertex();
-        buffer.vertex(posMatrix, (float) leftX, (float) botY, 0).color(0f, 1f, 1f, 1f).endVertex();
-        buffer.vertex(posMatrix, (float) rightX, (float) botY, 0).color(0f, 1f, 1f, 1f).endVertex();
-        buffer.vertex(posMatrix, (float) rightX, (float) topY, 0).color(1f, 1f, 1f, 1f).endVertex();
+        buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+        buffer.addVertex(posMatrix, (float) leftX, (float) topY, 0).setColor(1f, 1f, 1f, 1f);
+        buffer.addVertex(posMatrix, (float) leftX, (float) botY, 0).setColor(0f, 1f, 1f, 1f);
+        buffer.addVertex(posMatrix, (float) rightX, (float) botY, 0).setColor(0f, 1f, 1f, 1f);
+        buffer.addVertex(posMatrix, (float) rightX, (float) topY, 0).setColor(1f, 1f, 1f, 1f);
 
-        Tesselator.getInstance().end();
+        BufferUploader.drawWithShader(buffer.buildOrThrow());
 
         // Render saturation value indicator
         int hueY = topY + Math.round((1f - hue) * svSquareSize);

@@ -31,7 +31,6 @@ import java.security.InvalidParameterException;
 
 import static caeruleusTait.world.preview.client.WorldPreviewComponents.LOADING_PREVIEW;
 import static caeruleusTait.world.preview.client.WorldPreviewComponents.SAVING_PREVIEW;
-import static net.minecraft.client.gui.screens.worldselection.CreateWorldScreen.FOOTER_SEPERATOR;
 
 public class InGamePreviewScreen extends Screen implements PreviewContainerDataProvider {
 
@@ -70,10 +69,10 @@ public class InGamePreviewScreen extends Screen implements PreviewContainerDataP
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        renderDirtBackground(guiGraphics);
+        renderBackground(guiGraphics, mouseX, mouseY, partialTick);
         // renderBackground(guiGraphics);
         guiGraphics.drawCenteredString(minecraft.font, WorldPreviewComponents.TITLE_FULL, width / 2, 6, 0xFFFFFF);
-        guiGraphics.blit(FOOTER_SEPERATOR, 0, Mth.roundToward(this.height - 30, 2), 0.0F, 0.0F, this.width, 2, 32, 2);
+        guiGraphics.blit(FOOTER_SEPARATOR, 0, Mth.roundToward(this.height - 30, 2), 0.0F, 0.0F, this.width, 2, 32, 2);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
     }
 

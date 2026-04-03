@@ -22,9 +22,9 @@ import java.util.stream.Collectors;
 import static caeruleusTait.world.preview.client.WorldPreviewComponents.SETTINGS_TITLE;
 
 public class SettingsScreen extends Screen {
-    public static final ResourceLocation HEADER_SEPERATOR = new ResourceLocation("textures/gui/header_separator.png");
-    public static final ResourceLocation FOOTER_SEPERATOR = new ResourceLocation("textures/gui/footer_separator.png");
-    public static final ResourceLocation LIGHT_DIRT_BACKGROUND = new ResourceLocation("textures/gui/light_dirt_background.png");
+    public static final ResourceLocation HEADER_SEPERATOR = ResourceLocation.withDefaultNamespace("textures/gui/header_separator.png");
+    public static final ResourceLocation FOOTER_SEPERATOR = ResourceLocation.withDefaultNamespace("textures/gui/footer_separator.png");
+    public static final ResourceLocation LIGHT_DIRT_BACKGROUND = ResourceLocation.withDefaultNamespace("textures/gui/light_dirt_background.png");
 
     private final Screen lastScreen;
     private final PreviewContainer previewContainer;
@@ -88,14 +88,12 @@ public class SettingsScreen extends Screen {
         super.render(guiGraphics, i, j, f);
     }
 
-    @Override
     public void renderDirtBackground(GuiGraphics guiGraphics) {
         guiGraphics.blit(LIGHT_DIRT_BACKGROUND, 0, 0, 0, 0.0F, 0.0F, this.width, this.height, 32, 32);
     }
 
     @Override
     public void tick() {
-        this.tabManager.tickCurrent();
     }
 
     @Override
